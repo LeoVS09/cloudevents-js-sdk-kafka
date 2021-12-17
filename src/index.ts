@@ -1,2 +1,2 @@
 
-console.log('Something good')
+export const sum = (a: number, b: number) => a + b;
