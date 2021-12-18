@@ -1,7 +1,7 @@
-import { CloudEvent } from 'cloudevents'
+import { CloudEvent, Version } from 'cloudevents'
 import {Consumer, EachMessagePayload, Kafka, Producer} from 'kafkajs'
 import * as CeKafka from "../src"
-import {CloudEventStrict} from '../src'
+const {CloudEventStrict} = CeKafka
 
 
 describe('Kafka', () => {
@@ -23,7 +23,7 @@ describe('Kafka', () => {
         kafka = new Kafka({
             clientId: 'test-app',
             brokers: ['kafka:9092']
-          })
+        })
 
         producer = kafka.producer()
 
@@ -73,7 +73,7 @@ describe('Kafka', () => {
 
     it('send and receive message', async () => {
         const ce = new CloudEventStrict({
-            specversion: '1.0',
+            specversion: Version.V1,
             source: 'sourse',
             id: 'id',
             type: 'message.send'
