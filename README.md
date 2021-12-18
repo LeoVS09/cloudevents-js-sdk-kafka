@@ -2,6 +2,8 @@
 
 Kafka transport plugin for CloudEvents JS SDK
 
+Currently support only structured mode
+
 ## Development
 
 Firstly save alias in `/etc/hosts`
