@@ -1,6 +1,7 @@
 import { CloudEvent, Version } from 'cloudevents'
 import {Consumer, EachMessagePayload, Kafka, Producer} from 'kafkajs'
 import * as CeKafka from "../src"
+import { CloudEventStrictV1 } from '../src'
 const {CloudEventStrict} = CeKafka
 
 
@@ -102,8 +103,7 @@ describe('Kafka', () => {
 
     it('send same data', async () => {
         type TestData = { test: string}
-        const ce = new CloudEventStrict({
-            specversion: '1.0',
+        const ce = new CloudEventStrictV1({
             source: 'sourse',
             id: 'id',
             type: 'message.send',

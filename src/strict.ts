@@ -10,8 +10,21 @@ export class CloudEventStrict<T = undefined> extends CloudEvent<T> {
     }
 }
 
+// By some reason Omit<CloudEventV1<T>, 'specversion'> not working for that case
+// @ts-ignore
+export interface DefinedVersionEvent<T = undefined> extends CloudEventV1<T> {
+    /**
+     * The version of the CloudEvents specification which the event
+     * uses. This enables the interpretation of the context. Compliant event
+     * producers MUST use a value of `1.0` when referring to this version of the
+     * specification.
+     * Will be `1.0` by default.
+     */
+    specversion?: string
+}
+
 export class CloudEventStrictV1<T = undefined> extends CloudEventStrict<T> {
-    constructor(event: Omit<CloudEventV1<T>, 'specversion'>) {
+    constructor(event: DefinedVersionEvent<T>) {
         super({
             specversion: Version.V1,
             ...event
