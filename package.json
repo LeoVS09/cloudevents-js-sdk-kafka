@@ -9,11 +9,13 @@
   "unpkg": "./dist/index.umd.js",
   "exports": "./dist/index.modern.js",
   "scripts": {
+    "prepublishOnly": "npm run clean && npm run build",
     "build": "microbundle",
     "dev": "microbundle watch",
     "test": "jest --watchAll",
     "test:ci": "jest",
-    "test:debug": "node --inspect-brk=0.0.0.0:9229 -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:debug": "node --inspect-brk=0.0.0.0:9229 -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "clean": "rm -rf dist"
   },
   "repository": {
     "type": "git",

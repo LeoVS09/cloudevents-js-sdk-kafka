@@ -1,0 +1,6 @@
+src/
+test/
+docker-compose.yaml
+jest.config.cjs
+.vscode/
+.github/
