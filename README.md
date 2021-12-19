@@ -131,7 +131,7 @@ Firstly save alias in `/etc/hosts`
 Start kafka
 
 ```bash
-docker-compose kafka
+docker-compose up kafka
 ```
 
 Install dependencies
