@@ -8,6 +8,7 @@
   "main": "dist/index.cjs",
   "unpkg": "./dist/index.umd.js",
   "exports": "./dist/index.modern.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "prepublishOnly": "npm run clean && npm run build",
     "build": "microbundle",
