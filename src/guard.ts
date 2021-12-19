@@ -8,11 +8,11 @@ import { CeKafkaMessage } from "./models";
  * @param {Message} message an incoming Message object
  * @returns {boolean} true if this Message is a CloudEvent
  */
- export function isEvent(message: CeKafkaMessage | any): boolean {
+export function isEvent(message: any): message is CeKafkaMessage {
     try {
-      deserialize(message);
-      return true;
+        deserialize(message);
+        return true;
     } catch (err) {
-      return false;
+        return false;
     }
-  }
+}
