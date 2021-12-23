@@ -2,8 +2,9 @@ import {CloudEvent, Mode, ValidationError, Version, CONSTANTS, CloudEventV1} fro
 import { JSONParser, Parser, parserByContentType, MappedParser } from 'cloudevents/dist/parsers'
 import { isStringOrObjectOrThrow } from 'cloudevents/dist/event/validation';
 import { sanitize, getMode, getVersion} from './headers';
-import { CeKafkaMessage, Headers, SanitizedHeader } from './models';
+import { CeKafkaMessage, CloudEventWithKafka, Headers, SanitizedHeader } from './models';
 import {v03structuredParsers, v1structuredParsers} from 'cloudevents/dist/message/http/headers';
+import { partitionKeyExtenstionParsers } from './parsers';
 
 export class NotImplementedError extends Error {
     constructor(message: string) {
@@ -18,7 +19,7 @@ export class NotImplementedError extends Error {
  * @param {Message} message the incoming message
  * @return {CloudEvent} A new {CloudEvent} instance
  */
-export function deserialize<T>({value, headers}: CeKafkaMessage): CloudEvent<T> | CloudEvent<T>[] {
+export function deserialize<T>({value, headers}: CeKafkaMessage): CloudEventWithKafka<T> | CloudEventWithKafka<T>[] {
     if (!value) 
         throw new ValidationError("value is null or undefined");  
 
@@ -77,15 +78,20 @@ function parseContent(value: string, contentType?: string): Record<string, unkno
     return { ...(parser.parse(value) as Record<string, unknown>) };
 }
 
+const v1structuredParsersWithExtenstions = {
+    ...v1structuredParsers,
+    ...partitionKeyExtenstionParsers
+}
+
 function getParsersMap(version: Version): Record<string, MappedParser>{
     if(version == Version.V03) 
         return v03structuredParsers
     
     if(version == Version.V1)
-        return v1structuredParsers
+        return v1structuredParsersWithExtenstions
 
     console.warn(`Only v0.3 and v1.0 specversion are supported, but received ${version}, will fallback to v1.0`);
-    return v1structuredParsers
+    return v1structuredParsersWithExtenstions
 }
 
 export type EventObject = { [key: string]: unknown }

@@ -1,18 +1,19 @@
-import { CloudEvent, CloudEventV1, Version } from "cloudevents";
+import { CloudEvent, Version } from "cloudevents";
+import {KafkaCloudEventV1} from './models'
 
 /** 
  * Contructor typings not working for base CloudEvent,
  * this class enable strict type checks for constructor
  * */
 export class CloudEventStrict<T = undefined> extends CloudEvent<T> {
-    constructor(event: CloudEventV1<T>) {
+    constructor(event: KafkaCloudEventV1<T>) {
         super(event, true)
     }
 }
 
 // By some reason Omit<CloudEventV1<T>, 'specversion'> not working for that case
 // @ts-ignore
-export interface DefinedVersionEvent<T = undefined> extends CloudEventV1<T> {
+export interface DefinedVersionEvent<T = undefined> extends KafkaCloudEventV1<T> {
     /**
      * The version of the CloudEvents specification which the event
      * uses. This enables the interpretation of the context. Compliant event
@@ -28,6 +29,6 @@ export class CloudEventStrictV1<T = undefined> extends CloudEventStrict<T> {
         super({
             specversion: Version.V1,
             ...event
-        } as CloudEventV1<T>)
+        } as KafkaCloudEventV1<T>)
     }
 }

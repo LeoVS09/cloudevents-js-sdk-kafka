@@ -77,7 +77,8 @@ describe('Kafka', () => {
             specversion: Version.V1,
             source: 'sourse',
             id: 'id',
-            type: 'message.send'
+            type: 'message.send',
+            partitionkey: 'some-partitionkey',
         })
         const messsage = CeKafka.structured(ce)
         
@@ -95,10 +96,11 @@ describe('Kafka', () => {
         await messageReceived
 
         expect(receivedCe!).toBeDefined()
-        expect(receivedCe!.specversion).toBe(ce.specversion)
-        expect(receivedCe!.source).toBe(ce.source)
-        expect(receivedCe!.id).toBe(ce.id)
-        expect(receivedCe!.type).toBe(ce.type)
+        expect(receivedCe!.specversion).toBe(Version.V1)
+        expect(receivedCe!.source).toBe('sourse')
+        expect(receivedCe!.id).toBe('id')
+        expect(receivedCe!.type).toBe('message.send')
+        expect(receivedCe!.partitionkey).toBe('some-partitionkey')
     })
 
     it('send same data', async () => {
@@ -130,5 +132,6 @@ describe('Kafka', () => {
         expect(receivedCe!).toBeDefined()
         expect(receivedCe!.dataschema).toBe('https://github.com/LeoVS09/cloudevents-js-sdk-kafka/dataschema.json')
         expect(receivedCe!.data?.test).toBe('test-data')
+        expect(receivedCe!.partitionkey).toBeUndefined()
     })
 })

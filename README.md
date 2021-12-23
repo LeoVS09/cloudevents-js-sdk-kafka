@@ -7,6 +7,7 @@ Kafka transport extension for CloudEvents JS SDK
 Allow serialise and deserialise [CloudEvents](https://github.com/cloudevents/spec) for kafka protocol.
 
 * Based on [Kafka Protocol Binding for CloudEvents - Version 1.0.1](https://github.com/cloudevents/spec/blob/v1.0.1/kafka-protocol-binding.md)
+* Support [Partitioning](https://github.com/cloudevents/spec/blob/v1.0.1/extensions/partitioning.md)
 * Tested with [KafkaJS](https://github.com/tulios/kafkajs), but probably will work with any other client.
 * Currently support only [structured mode](https://github.com/cloudevents/spec/blob/v1.0.1/kafka-protocol-binding.md#33-structured-content-mode)
 * Supports CloudEvent versions 0.3, 1.0
@@ -118,6 +119,23 @@ await producer.send({
     ],
 })
 
+```
+
+### Patitions Key
+
+For define `key` property of kafka message you can add `partitionkey` field to your event
+
+```ts
+const ce = new CloudEvent({
+    specversion: Version.V1,
+    source: 'some-source',
+    id: 'some-id',
+    type: 'message.send',
+    partitionkey: 'some-partitionkey'
+})
+
+const messsage = CeKafka.structured(ce)
+console.log(message.key) // some-partitionkey
 ```
 
 ## Development
