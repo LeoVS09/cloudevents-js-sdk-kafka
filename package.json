@@ -2,12 +2,8 @@
   "name": "cloudevents-kafka",
   "version": "0.1.5",
   "description": "Kafka transport plugin for CloudEvents JS SDK",
-  "type": "module",
   "source": "src/index.ts",
-  "module": "dist/index.js",
-  "main": "dist/index.cjs",
-  "unpkg": "./dist/index.umd.js",
-  "exports": "./dist/index.modern.js",
+  "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "prepublishOnly": "npm run clean && npm run build",
