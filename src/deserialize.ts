@@ -64,8 +64,6 @@ function parseStructured<T>(value: string, headers: SanitizedHeader, key: string
     isStringOrObjectOrThrow(value, new ValidationError("value must be an object or a string"));
 
     const eventObj = JSON.parse(value as string);
-
-    console.log(timestamp, eventObj.time);
     
     if(eventObj.time)
         eventObj.time = new Date(eventObj.time).toISOString();
