@@ -135,7 +135,6 @@ describe('Kafka', () => {
         
         let receivedCe: CloudEvent
         messageHandler = async ({message}) => {
-            console.log(message)
             receivedCe = CeKafka.deserialize(message) as CloudEvent
         }
 
