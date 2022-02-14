@@ -103,6 +103,58 @@ describe('Kafka', () => {
         expect(receivedCe!.partitionkey).toBe('some-partitionkey')
     })
 
+    it('should correctly serialize timestamp', () => {
+        const time = new Date().toString()
+        const ce = new CloudEventStrict({
+            specversion: Version.V1,
+            source: 'sourse',
+            id: 'id',
+            type: 'message.send',
+            partitionkey: 'message-with-timestamp',
+            time 
+        })
+
+        const serialised = CeKafka.structured(ce)
+        expect(new Date(+serialised.timestamp!).toString()).toBe(new Date(time).toString())
+
+        const deserialised = CeKafka.deserialize(serialised) as CloudEvent
+        expect(deserialised!.time).toBe(new Date(time).toISOString())
+    })
+
+    it('send and receive message with same time', async () => {
+        const time = new Date().toString()
+        const ce = new CloudEventStrict({
+            specversion: Version.V1,
+            source: 'sourse',
+            id: 'id',
+            type: 'message.send',
+            partitionkey: 'message-with-timestamp',
+            time 
+        })
+        const messsage = CeKafka.structured(ce)
+        
+        let receivedCe: CloudEvent
+        messageHandler = async ({message}) => {
+            receivedCe = CeKafka.deserialize(message) as CloudEvent
+        }
+
+        await producer.send({
+            topic: 'test-topic',
+            messages: [
+                messsage
+            ],
+        })
+        await messageReceived
+
+        expect(receivedCe!).toBeDefined()
+        expect(receivedCe!.specversion).toBe(Version.V1)
+        expect(receivedCe!.source).toBe('sourse')
+        expect(receivedCe!.id).toBe('id')
+        expect(receivedCe!.type).toBe('message.send')
+        expect(receivedCe!.partitionkey).toBe('message-with-timestamp')
+        expect(receivedCe!.time).toBe(new Date(time).toISOString())
+    })
+
     it('send same data', async () => {
         type TestData = { test: string}
         const ce = new CloudEventStrictV1({

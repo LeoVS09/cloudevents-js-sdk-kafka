@@ -19,12 +19,15 @@ export class NotImplementedError extends Error {
  * @param {Message} message the incoming message
  * @return {CloudEvent} A new {CloudEvent} instance
  */
-export function deserialize<T>({value, headers}: CeKafkaMessage): CloudEventWithKafka<T> | CloudEventWithKafka<T>[] {
+export function deserialize<T>({value, headers, key, timestamp}: CeKafkaMessage): CloudEventWithKafka<T> | CloudEventWithKafka<T>[] {
     if (!value) 
         throw new ValidationError("value is null or undefined");  
 
     if (typeof value === 'object' && Buffer.isBuffer(value))
         value = value.toString();
+
+    if (typeof key === 'object' && Buffer.isBuffer(key))
+        key = key.toString();
 
     if (!headers) 
         throw new ValidationError("headers is null or undefined");
@@ -36,7 +39,7 @@ export function deserialize<T>({value, headers}: CeKafkaMessage): CloudEventWith
 
     switch (mode) {
         case Mode.STRUCTURED:
-            return parseStructured(value, sanitaisedHeaders, version);
+            return parseStructured(value, sanitaisedHeaders, key, timestamp, version);
         
         case Mode.BINARY:
         case Mode.BATCH:
@@ -56,15 +59,17 @@ export function deserialize<T>({value, headers}: CeKafkaMessage): CloudEventWith
  * @returns {CloudEvent} a new CloudEvent instance for the provided headers and payload
  * @throws {ValidationError} if the payload and header combination do not conform to the spec
  */
-function parseStructured<T>(value: string, headers: SanitizedHeader, version: Version): CloudEvent<T> {
+function parseStructured<T>(value: string, headers: SanitizedHeader, key: string | undefined, timestamp: string | undefined, version: Version): CloudEvent<T> {
 
     isStringOrObjectOrThrow(value, new ValidationError("value must be an object or a string"));
 
-    const incoming = parseContent(value, headers[CONSTANTS.HEADER_CONTENT_TYPE])
-  
-    let eventObj = parseFields(incoming, getParsersMap(version));
+    const eventObj = JSON.parse(value as string);
     
-    eventObj = fallbackDataForV03(eventObj)
+    if(eventObj.time)
+        eventObj.time = new Date(eventObj.time).toISOString();
+    
+    if(key)
+        eventObj.partitionkey = key
 
     return new CloudEvent<T>(eventObj as CloudEventV1<T>, false);
   }
